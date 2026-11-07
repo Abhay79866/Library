@@ -40,7 +40,7 @@ export const BookedSeatModal: React.FC<BookedSeatModalProps> = ({
                 </span>
               </div>
               <h3 className="text-lg font-bold text-[#2C2C2C] mt-1.5">
-                Seat Allocation Details
+                Sucess kar Library • Seat Allocation Details
               </h3>
             </div>
 

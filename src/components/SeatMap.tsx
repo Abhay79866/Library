@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Seat, LibraryLayoutElement } from '../types';
 import { SeatCard } from './SeatCard';
-import { Sparkles, Map as MapIcon, LayoutGrid, DoorOpen, Columns, BookMarked } from 'lucide-react';
+import { Sparkles, Map as MapIcon, LayoutGrid, DoorOpen, Columns, BookMarked, ZoomIn, ZoomOut, Maximize2, Move } from 'lucide-react';
 
 interface SeatMapProps {
   seats: Seat[];
@@ -23,8 +23,9 @@ export const SeatMap: React.FC<SeatMapProps> = ({
   selectedShiftLabel,
 }) => {
   // View toggle: 'spatial' (matches the Konva drag-and-drop floor plan) vs 'grid' (row lists)
-  // Default to 'spatial' so changes made in the editor are immediately visible!
   const [viewMode, setViewMode] = useState<'spatial' | 'grid'>('spatial');
+  // Scale / Zoom for mobile responsiveness
+  const [spatialScale, setSpatialScale] = useState<number>(1);
 
   // Compute stats for current view
   const total = seats.length;
@@ -76,18 +77,18 @@ export const SeatMap: React.FC<SeatMapProps> = ({
   }, [layoutElements]);
 
   return (
-    <div className="backdrop-blur-md bg-white/70 border border-white/40 rounded-3xl p-5 sm:p-7 shadow-xs relative overflow-hidden">
+    <div className="backdrop-blur-md bg-white/70 border border-white/40 rounded-3xl p-3.5 sm:p-7 shadow-xs relative overflow-hidden">
       
       {/* Top Bar: Floor Information, Occupancy & View Switcher */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-5 border-b border-[#EAE6DF]/70 gap-3">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between pb-4 sm:pb-5 border-b border-[#EAE6DF]/70 gap-3">
         <div>
           <div className="flex items-center space-x-2">
             <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#4A7C59] animate-pulse" />
             <h2 className="text-base sm:text-lg font-bold text-[#2C2C2C]">
-              Main Reading Hall (Floor 1)
+              Sucess kar Library • Main Reading Hall
             </h2>
-            <span className="px-2 py-0.5 rounded-md bg-[#F3F0EA] border border-[#E5E1D8] text-[11px] font-semibold text-[#706B65]">
-              Live Map
+            <span className="px-2 py-0.5 rounded-md bg-[#F3F0EA] border border-[#E5E1D8] text-[10px] sm:text-[11px] font-semibold text-[#706B65]">
+              Floor 1
             </span>
           </div>
           <p className="text-xs text-[#706B65] mt-0.5">
@@ -96,12 +97,43 @@ export const SeatMap: React.FC<SeatMapProps> = ({
           </p>
         </div>
 
-        <div className="flex items-center space-x-3">
+        <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2.5">
+          
+          {/* Zoom / Scale Controls for mobile & tablet */}
+          {viewMode === 'spatial' && (
+            <div className="inline-flex items-center rounded-xl bg-white border border-[#E5E1D8] p-0.5 text-xs shadow-2xs">
+              <button
+                onClick={() => setSpatialScale((s) => Math.max(0.5, s - 0.1))}
+                className="p-1 sm:p-1.5 text-[#706B65] hover:text-[#2C2C2C]"
+                title="Zoom Out"
+              >
+                <ZoomOut className="w-3.5 h-3.5" />
+              </button>
+              <span className="px-1.5 py-0.5 font-mono text-[10px] sm:text-[11px] text-[#2C2C2C] font-semibold">
+                {Math.round(spatialScale * 100)}%
+              </span>
+              <button
+                onClick={() => setSpatialScale((s) => Math.min(1.5, s + 0.1))}
+                className="p-1 sm:p-1.5 text-[#706B65] hover:text-[#2C2C2C]"
+                title="Zoom In"
+              >
+                <ZoomIn className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => setSpatialScale(1)}
+                className="p-1 sm:p-1.5 text-[#706B65] hover:text-[#2C2C2C] border-l border-[#E5E1D8]"
+                title="Reset Zoom"
+              >
+                <Maximize2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+
           {/* View Mode Switcher: Spatial Floorplan vs Row Grid */}
           <div className="inline-flex p-0.5 rounded-xl bg-[#EFECE6] border border-[#E5E1D8] text-xs">
             <button
               onClick={() => setViewMode('spatial')}
-              className={`px-3 py-1.5 rounded-lg font-bold flex items-center space-x-1.5 transition-all ${
+              className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg font-bold flex items-center space-x-1.5 transition-all text-xs ${
                 viewMode === 'spatial'
                   ? 'bg-white text-[#2C2C2C] shadow-xs'
                   : 'text-[#706B65] hover:text-[#2C2C2C]'
@@ -109,11 +141,11 @@ export const SeatMap: React.FC<SeatMapProps> = ({
               title="Spatial Floor Plan layout from Editor"
             >
               <MapIcon className="w-3.5 h-3.5 text-[#A87B42]" />
-              <span>Architectural Floorplan</span>
+              <span className="hidden xs:inline">Architectural</span> Floorplan
             </button>
             <button
               onClick={() => setViewMode('grid')}
-              className={`px-3 py-1.5 rounded-lg font-bold flex items-center space-x-1.5 transition-all ${
+              className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg font-bold flex items-center space-x-1.5 transition-all text-xs ${
                 viewMode === 'grid'
                   ? 'bg-white text-[#2C2C2C] shadow-xs'
                   : 'text-[#706B65] hover:text-[#2C2C2C]'
@@ -126,7 +158,7 @@ export const SeatMap: React.FC<SeatMapProps> = ({
           </div>
 
           {/* Occupancy Indicator */}
-          <div className="hidden md:flex items-center space-x-3 text-xs bg-[#FAF9F6] border border-[#E5E1D8] px-3 py-1.5 rounded-xl">
+          <div className="hidden lg:flex items-center space-x-3 text-xs bg-[#FAF9F6] border border-[#E5E1D8] px-3 py-1.5 rounded-xl">
             <div className="flex flex-col">
               <span className="text-[10px] uppercase font-bold text-[#8C857B]">Occupancy</span>
               <span className="font-bold text-[#2C2C2C]">
@@ -144,22 +176,30 @@ export const SeatMap: React.FC<SeatMapProps> = ({
       </div>
 
       {/* BookMyShow Style "Quiet Zone / Librarian Desk" Top Bar */}
-      <div className="my-6 flex flex-col items-center">
+      <div className="my-4 sm:my-6 flex flex-col items-center">
         <div className="w-full max-w-xl h-2 bg-gradient-to-r from-transparent via-[#D1CCC1] to-transparent rounded-full shadow-2xs" />
-        <div className="relative -top-1 px-4 py-0.5 rounded-full bg-[#FAF9F6] border border-[#E5E1D8] text-[11px] font-semibold tracking-wider uppercase text-[#706B65] shadow-2xs flex items-center space-x-1.5">
-          <Sparkles className="w-3 h-3 text-[#A87B42]" />
-          <span>Quiet Study Zone • Librarian Desk & Reference Stacks</span>
+        <div className="relative -top-1 px-3 sm:px-4 py-0.5 rounded-full bg-[#FAF9F6] border border-[#E5E1D8] text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase text-[#706B65] shadow-2xs flex items-center space-x-1.5 text-center">
+          <Sparkles className="w-3 h-3 text-[#A87B42] shrink-0" />
+          <span className="truncate">Quiet Study Zone • Librarian Desk & Reference Stacks</span>
         </div>
+      </div>
+
+      {/* Mobile Hint Banner */}
+      <div className="md:hidden flex items-center justify-center space-x-1.5 text-[11px] text-[#8C857B] mb-3 bg-[#FAF9F6] py-1 rounded-lg border border-[#E5E1D8]/60">
+        <Move className="w-3 h-3 text-[#A87B42]" />
+        <span>Swipe horizontally to view entire hall • Tap any desk to book</span>
       </div>
 
       {/* ================= VIEW 1: SPATIAL ARCHITECTURAL FLOORPLAN MAP ================= */}
       {viewMode === 'spatial' && layoutElements.length > 0 ? (
-        <div className="overflow-x-auto pb-4">
+        <div className="overflow-x-auto pb-4 scrollbar-thin">
           <div
-            className="relative mx-auto rounded-2xl bg-[#FAF9F6] border border-[#E5E1D8] p-4 shadow-inner"
+            className="relative mx-auto rounded-2xl bg-[#FAF9F6] border border-[#E5E1D8] p-4 shadow-inner origin-top-left transition-transform duration-200"
             style={{
               width: `${Math.max(floorplanBounds.width, 780)}px`,
               height: `${Math.max(floorplanBounds.height, 560)}px`,
+              transform: `scale(${spatialScale})`,
+              transformOrigin: 'top left',
               backgroundImage:
                 'radial-gradient(#2C2C2C 0.6px, transparent 0.6px), radial-gradient(#2C2C2C 0.6px, #FAF9F6 0.6px)',
               backgroundSize: '20px 20px',
@@ -168,7 +208,7 @@ export const SeatMap: React.FC<SeatMapProps> = ({
           >
             {/* 1. Render Structural Architectural Elements: Walls, Bookshelves, Pillars, Doors */}
             {layoutElements.map((el) => {
-              if (el.type === 'seat') return null; // Seats handled separately below
+              if (el.type === 'seat') return null;
 
               if (el.type === 'wall') {
                 return (
@@ -252,7 +292,6 @@ export const SeatMap: React.FC<SeatMapProps> = ({
             {layoutElements
               .filter((el) => el.type === 'seat')
               .map((el) => {
-                // Find matching seat data from Firestore state
                 const code = el.seatCode || el.label || '';
                 const liveSeat =
                   seatLookup.get(el.id) ||
@@ -264,7 +303,7 @@ export const SeatMap: React.FC<SeatMapProps> = ({
                     floorId: 'floor-1',
                     status: 'available' as const,
                     shift: 'morning' as const,
-                    month: '2024-11',
+                    month: '2026-11',
                   };
 
                 const isQueryMatch =
@@ -297,21 +336,21 @@ export const SeatMap: React.FC<SeatMapProps> = ({
         </div>
       ) : (
         /* ================= VIEW 2: CATEGORIZED ROW PODS VIEW ================= */
-        <div className="overflow-x-auto pb-4">
-          <div className="min-w-[620px] max-w-4xl mx-auto flex flex-col gap-4">
+        <div className="overflow-x-auto pb-4 scrollbar-thin">
+          <div className="min-w-[580px] max-w-4xl mx-auto flex flex-col gap-3 sm:gap-4">
             {rows.map(({ row, seats: rowSeats }) => {
               const leftPod = rowSeats.filter((s) => s.number <= 4);
               const rightPod = rowSeats.filter((s) => s.number > 4);
 
               return (
-                <div key={row} className="flex items-center justify-between gap-3 sm:gap-6">
+                <div key={row} className="flex items-center justify-between gap-2 sm:gap-6">
                   {/* Left Row Identifier */}
-                  <div className="w-7 h-7 rounded-lg bg-[#F3F0EA] border border-[#E5E1D8] flex items-center justify-center text-xs font-bold text-[#706B65] shrink-0">
+                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-[#F3F0EA] border border-[#E5E1D8] flex items-center justify-center text-xs font-bold text-[#706B65] shrink-0">
                     {row}
                   </div>
 
                   {/* Left Pod */}
-                  <div className="flex items-center gap-2 sm:gap-3 flex-1 justify-end">
+                  <div className="flex items-center gap-1.5 sm:gap-3 flex-1 justify-end">
                     {leftPod.map((seat) => {
                       const isQueryMatch =
                         searchQuery.trim().length > 0 &&
@@ -332,12 +371,12 @@ export const SeatMap: React.FC<SeatMapProps> = ({
                   </div>
 
                   {/* Central Walkway */}
-                  <div className="w-8 sm:w-12 shrink-0 flex items-center justify-center">
-                    <div className="h-8 border-r border-dashed border-[#D1CCC1]/60" />
+                  <div className="w-6 sm:w-12 shrink-0 flex items-center justify-center">
+                    <div className="h-6 sm:h-8 border-r border-dashed border-[#D1CCC1]/60" />
                   </div>
 
                   {/* Right Pod */}
-                  <div className="flex items-center gap-2 sm:gap-3 flex-1 justify-start">
+                  <div className="flex items-center gap-1.5 sm:gap-3 flex-1 justify-start">
                     {rightPod.map((seat) => {
                       const isQueryMatch =
                         searchQuery.trim().length > 0 &&
@@ -358,7 +397,7 @@ export const SeatMap: React.FC<SeatMapProps> = ({
                   </div>
 
                   {/* Right Row Identifier */}
-                  <div className="w-7 h-7 rounded-lg bg-[#F3F0EA] border border-[#E5E1D8] flex items-center justify-center text-xs font-bold text-[#706B65] shrink-0">
+                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-[#F3F0EA] border border-[#E5E1D8] flex items-center justify-center text-xs font-bold text-[#706B65] shrink-0">
                     {row}
                   </div>
                 </div>
@@ -369,12 +408,12 @@ export const SeatMap: React.FC<SeatMapProps> = ({
       )}
 
       {/* Bottom Walkway / Navigation Guide */}
-      <div className="mt-6 pt-4 border-t border-[#EAE6DF]/70 text-center text-xs text-[#8C857B] flex flex-wrap items-center justify-center gap-2">
-        <span>Main Reading Hall</span>
+      <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-[#EAE6DF]/70 text-center text-[11px] sm:text-xs text-[#8C857B] flex flex-wrap items-center justify-center gap-2">
+        <span>Sucess kar Library Main Reading Hall</span>
         <span>•</span>
-        <span>Click any desk to book (Available = Beige, Booked = Clay/Red)</span>
+        <span>Available = Warm Beige, Booked = Clay/Red</span>
         <span>•</span>
-        <span>Arranged via Visual Canvas Editor</span>
+        <span>Mobile Optimized</span>
       </div>
 
     </div>

@@ -507,9 +507,8 @@ export default function App() {
         onAddLogs={(newLogs) => setReminderLogs((prev) => [...newLogs, ...prev])}
       />
 
-      {/* Subtle Admin Footer */}
-      <footer className="py-4 border-t border-[#EAE6DF]/60 text-center text-xs text-[#8C857B]">
-        <span>StudySpot Admin System • Live Cloud Firestore Sync • Konva Visual Floorplan • NO Student Logins</span>
+      <footer className="py-4 border-t border-[#EAE6DF]/60 text-center text-xs text-[#8C857B] px-4">
+        <span>Sucess kar Library Admin System • Live Cloud Firestore Sync • Konva Visual Floorplan • NO Student Logins</span>
       </footer>
 
     </div>

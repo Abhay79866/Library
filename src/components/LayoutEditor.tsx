@@ -63,14 +63,21 @@ export const LayoutEditor: React.FC<LayoutEditorProps> = ({
     setTimeout(() => setEditorToast(null), 3500);
   };
 
-  // Resize canvas to container
+  // Resize canvas to container responsively
   useEffect(() => {
     const updateSize = () => {
       if (containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth;
+        const isMobile = window.innerWidth < 640;
         setStageSize({
-          width: Math.max(680, containerRef.current.offsetWidth - 24),
-          height: 620,
+          width: Math.max(320, containerWidth - (isMobile ? 12 : 24)),
+          height: isMobile ? 500 : 620,
         });
+
+        // On initial mobile load, scale to fit if zoom is at default 1
+        if (isMobile && containerWidth < 600 && zoom === 1) {
+          setZoom(Math.max(0.5, Math.min(0.75, (containerWidth - 20) / 800)));
+        }
       }
     };
     updateSize();

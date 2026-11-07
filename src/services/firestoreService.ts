@@ -183,7 +183,7 @@ export async function saveLayoutToFirestore(
     await setDoc(layoutRef, {
       elements,
       updatedAt: new Date().toISOString(),
-      floorName: 'Main Reading Hall (Floor 1)',
+      floorName: 'Sucess kar Library - Main Reading Hall (Floor 1)',
     });
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, `${COLLECTIONS.LAYOUTS}/floor-1`);

@@ -96,7 +96,7 @@ export const BookingBottomSheet: React.FC<BookingBottomSheetProps> = ({
                 </span>
               </div>
               <h3 className="text-lg font-bold text-[#2C2C2C] mt-1">
-                Admin Seat Allocation
+                Sucess kar Library • Seat Allocation
               </h3>
               <p className="text-xs text-[#706B65]">
                 Assign to student for <strong className="text-[#2C2C2C]">{month.label}</strong> ({shift.label})

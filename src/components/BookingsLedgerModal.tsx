@@ -43,7 +43,7 @@ export const BookingsLedgerModal: React.FC<BookingsLedgerModalProps> = ({
               </div>
               <div>
                 <h3 className="text-lg font-bold text-[#2C2C2C]">
-                  Firestore Bookings Ledger
+                  Sucess kar Library • Bookings Ledger
                 </h3>
                 <p className="text-xs text-[#706B65]">
                   Live records in <code className="bg-[#F3F0EA] px-1 py-0.5 rounded text-[#2C2C2C]">/bookings</code> collection ({bookings.length} total)

@@ -80,7 +80,7 @@ export const CalendarModal: React.FC<CalendarModalProps> = ({
               </div>
               <div>
                 <h3 className="text-base font-bold text-[#2C2C2C]">
-                  Billing & Shift Calendar
+                  Sucess kar Library • Billing Calendar
                 </h3>
                 <p className="text-xs text-[#706B65]">
                   Select monthly billing window (Starting Nov 2026)
