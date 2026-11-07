@@ -1,0 +1,52 @@
+{
+  "entities": {
+    "Seat": {
+      "title": "Seat",
+      "description": "A desk or seat in the library reading hall",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "seatCode": { "type": "string" },
+        "row": { "type": "string" },
+        "floorId": { "type": "string" },
+        "status": { "type": "string", "enum": ["available", "booked", "maintenance"] },
+        "shift": { "type": "string", "enum": ["morning", "evening", "full_day"] },
+        "month": { "type": "string" },
+        "studentName": { "type": "string" },
+        "studentPhone": { "type": "string" },
+        "expiryDate": { "type": "string" }
+      },
+      "required": ["seatCode", "row", "floorId", "status", "shift", "month"]
+    },
+    "Booking": {
+      "title": "Booking",
+      "description": "A student seat allocation record with payment metadata",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "seatId": { "type": "string" },
+        "seatCode": { "type": "string" },
+        "studentName": { "type": "string" },
+        "studentPhone": { "type": "string" },
+        "amount": { "type": "number" },
+        "paymentMethod": { "type": "string", "enum": ["cash", "upi"] },
+        "startDate": { "type": "string" },
+        "endDate": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "expired", "cancelled"] },
+        "shift": { "type": "string" },
+        "month": { "type": "string" }
+      },
+      "required": ["seatId", "seatCode", "studentName", "studentPhone", "amount", "startDate", "endDate", "status"]
+    }
+  },
+  "firestore": {
+    "/seats/{seatId}": {
+      "schema": "Seat",
+      "description": "Library desks and occupancy states"
+    },
+    "/bookings/{bookingId}": {
+      "schema": "Booking",
+      "description": "Historical and active seat allocations"
+    }
+  }
+}

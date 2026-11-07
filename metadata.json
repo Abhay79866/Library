@@ -1,0 +1,6 @@
+{
+  "name": "Library Seat Management System",
+  "description": "Admin-only library seat management system with BookMyShow-style visual seat map, shifts, bookings, and layout management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
